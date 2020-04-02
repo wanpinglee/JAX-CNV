@@ -17,8 +17,8 @@ JAX-CNV depends on the following tools, which are already included in JAX-CNV/li
 
 ## Download and Installation
 ```Shell
-git clone --recursive https://github.com/TheJacksonLaboratory/genome_similarity.git
-cd genome_similarity
+git clone --recursive https://github.com/wanpinglee/JAX-CNV.git
+cd JAX-CNV
 make
 ```
 
