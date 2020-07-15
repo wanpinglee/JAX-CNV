@@ -28,8 +28,7 @@ struct SGetCnvSignalCml {
 	std::string log;	// --log
 	float unique_kmer = 0.6;	// --unique_kmer
 	float kmer_score = 0.5;	// --kmer_score
-	std::vector<std::string> chrom;	// --chrom
-	std::string chrom_input;
+	std::string chrom;	// --chrom
 	
 	// command line
 	std::string cmd;
@@ -56,7 +55,7 @@ struct SGetCnvSignalCml {
 		std::string("	--log <FILE>			Log output.\n" +
 		std::string("	--unique_kmer <FLOAT>		Require percentage of unique kmer to report a CNV. [0.6]\n") +
 		std::string("	--kmer_score <FLOAT>		Score for log2(kmer count) = 2 positions. [0.5]\n") +
-		std::string("   --chrom <STRING>            	Chromosomes; --chrom chr1,chr2,chr3.\n"));
+		std::string("	--chrom <STRING>            	Chromosomes; --chrom chr1,chr2,chr3.\n"));
 	}
 
 	// Check the required arguments.
@@ -98,15 +97,9 @@ struct SGetCnvSignalCml {
 			std::cerr << "ERROR: --kmer_score <FLOAT> should not larger than 1." << std::endl;
 			ok = false;
 		}
-		if (chrom_input.empty()) {
+		if (chrom.empty()) {
 			std::cerr << "ERROR: Please specify chromosomes; --chrom $(seq -f 'chr%g' 1 22) chrX chrY." << std::endl;
 			ok = false;
-		} else {
-			stringstream ss(chrom_input);
-			std::string tmp;
-
-			while(getline(ss, tmp, ','))
-    				chrom.push_back(tmp);
 		}
 
 		return ok;
@@ -168,7 +161,7 @@ struct SGetCnvSignalCml {
 				case 3: log = optarg; break;
 				case 4: unique_kmer = atof(optarg); break;
 				case 5: kmer_score = atof(optarg); break;
-				case 6: chrom_input = optarg; break;
+				case 6: chrom = optarg; break;
 				default: std::cerr << "WARNING: Unkonw parameter: " << long_option[option_index].name << std::endl; break;
 			}
 		}

@@ -5,6 +5,7 @@
 #include <list>
 #include <limits>
 #include <cstdint>
+#include <unordered_map>
 
 // Self include
 #include "GrabJellyfishKmer.h"
@@ -25,6 +26,7 @@
 
 // htslib include
 #include "htslib/sam.h"
+#include "htslib/cram/cram.h"
 
 namespace {
 struct SBamData {
@@ -361,7 +363,8 @@ std::cerr << "Filter" << std::endl;
 	}
 }
 
-void ParseTargetRegion(const std::string & cmd_region, const std::string & bamfile, std::list<Fastaq::SRegion> & regions) {
+void ParseTargetRegion(const std::string & chrom, const std::string & bamfile, std::list<Fastaq::SRegion> & regions) {
+/*
 	if (!cmd_region.empty()) { // Parse region from the command line.
 		Fastaq::SRegion tmp_region;
 		if (!tmp_region.Parse(cmd_region)) {
@@ -383,35 +386,36 @@ void ParseTargetRegion(const std::string & cmd_region, const std::string & bamfi
 			}
 		}
 		regions.push_back(tmp_region);
-	} else { // Parse regions from the bam header.
+	} else {
+*/ 
+		// Parse regions from the bam header.
 		// Load bam header
 		samFile * bam_reader = sam_open(bamfile.c_str(), "r");
 		bam_hdr_t *header;
 		header = sam_hdr_read(bam_reader);
+		std::unordered_map<std::string, Fastaq::SRegion> region_map;
 		for (int32_t i = 0; i < header->n_targets; ++i) {
 			Fastaq::SRegion tmp_region;
-			std::cerr << header->target_name[i] << "$$$" << std::endl;
 			std::string name = header->target_name[i];
-			if (name == "chr1" || name == "chr2" || name == "chr3"
-			 || name == "chr4" || name == "chr5" || name == "chr6"
-			 || name == "chr7" || name == "chr8" || name == "chr9"
-			|| name == "chr10" || name == "chr11" || name == "chr12"
-			|| name == "chr13" || name == "chr14" || name == "chr15"
-			|| name == "chr16" || name == "chr17" || name == "chr18"
-			|| name == "chr19" || name == "chr20" || name == "chr21"
-			|| name == "chr22" || name == "chrX" || name == "chrY")
-			{
-			std::cerr << "True" << std::endl;
 			tmp_region.chr = (header->target_name[i]);
 			tmp_region.begin = 0;
 			tmp_region.end = (header->target_len[i]) - 1;
-			std::cerr << "###" << tmp_region.chr << ":" << tmp_region.begin << "-" << tmp_region.end << std::endl;
-			regions.push_back(tmp_region);
-			}
+			region_map[tmp_region.chr] = tmp_region;
 		}
 		bam_hdr_destroy(header);
 		sam_close(bam_reader);
-	}
+
+		// Check exstance of chromsomes from --chrom
+		std::stringstream ss(chrom);
+		std::string tmp;
+		while(getline(ss, tmp, ',')) {
+			std::unordered_map<std::string, Fastaq::SRegion>::const_iterator ite = region_map.find(tmp);
+			if (ite == region_map.end()) {
+				std::cerr << "WARNING: Cannot find " << tmp << " in BAM header." << std::endl;
+			} else {
+				regions.push_back(ite->second);
+			}
+		}
 }
 
 // If some chromosomes in regions cannot be found in fasta or kmer_table, they will be removed.
@@ -439,7 +443,7 @@ bool CheckChrExistence(std::list<Fastaq::SRegion> & regions, const std::string &
 	std::list<Fastaq::SRegion>::iterator ite = regions.begin();
 	while (ite != regions.end() && !regions.empty()) {
 		if (fasta_header.GetReferenceId(ite->chr.c_str()) == -1) {
-			std::cerr << "Warning: " << ite->chr << " is not in fasta so it won't be further processed." << std::endl;
+			std::cerr << "WARNING: " << ite->chr << " is not in fasta so it won't be further processed." << std::endl;
 			regions.erase(ite);
 			exist = false;
 			if (ite != regions.end()) ++ite;
@@ -464,17 +468,19 @@ int GetCnvSignal::Run () const {
 		return 1;
 	}
 
+	// Region is replaced by --chrom
 	// Parse region.
 	// Parse region from the command line or parse regions from the bam header.
 	std::list<Fastaq::SRegion> regions;
-	ParseTargetRegion(cmdline.region, cmdline.bam, regions);
+	//ParseTargetRegion(cmdline.region, cmdline.bam, regions);
+	ParseTargetRegion(cmdline.chrom, cmdline.bam, regions);
 	if (!CheckChrExistence(regions, cmdline.fasta, cmdline.kmer_table)) return 1;
-
+	
 	// Check BAI
 	samFile * bam_reader = sam_open(cmdline.bam.c_str(), "r");
 	hts_idx_t * idx = sam_index_load(bam_reader,  cmdline.bam.c_str());
 	if (idx == NULL && sam_index_build(cmdline.bam.c_str(), 0) < 0) { // Try to build bam index
-		std::cerr << "ERROR: The region givin but bam index cannot be built and loaded." << std::endl;
+		std::cerr << "ERROR: Index of bam is not there and cannot be built." << std::endl;
 		sam_close(bam_reader);
 		return 1;
 	}
@@ -551,6 +557,8 @@ int GetCnvSignal::Run () const {
 			use_output_file = false;
 		}
 	}
+
+	// Generate result
 	for (std::vector<SHmmStats>::const_iterator ite = cnvs.begin(); ite != cnvs.end(); ++ite) {
 		if (ite->length > cmdline.minimum_report_size) {
 			std::string tmp;
