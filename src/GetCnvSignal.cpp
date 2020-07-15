@@ -390,10 +390,24 @@ void ParseTargetRegion(const std::string & cmd_region, const std::string & bamfi
 		header = sam_hdr_read(bam_reader);
 		for (int32_t i = 0; i < header->n_targets; ++i) {
 			Fastaq::SRegion tmp_region;
+			std::cerr << header->target_name[i] << "$$$" << std::endl;
+			std::string name = header->target_name[i];
+			if (name == "chr1" || name == "chr2" || name == "chr3"
+			 || name == "chr4" || name == "chr5" || name == "chr6"
+			 || name == "chr7" || name == "chr8" || name == "chr9"
+			|| name == "chr10" || name == "chr11" || name == "chr12"
+			|| name == "chr13" || name == "chr14" || name == "chr15"
+			|| name == "chr16" || name == "chr17" || name == "chr18"
+			|| name == "chr19" || name == "chr20" || name == "chr21"
+			|| name == "chr22" || name == "chrX" || name == "chrY")
+			{
+			std::cerr << "True" << std::endl;
 			tmp_region.chr = (header->target_name[i]);
 			tmp_region.begin = 0;
 			tmp_region.end = (header->target_len[i]) - 1;
+			std::cerr << "###" << tmp_region.chr << ":" << tmp_region.begin << "-" << tmp_region.end << std::endl;
 			regions.push_back(tmp_region);
+			}
 		}
 		bam_hdr_destroy(header);
 		sam_close(bam_reader);
