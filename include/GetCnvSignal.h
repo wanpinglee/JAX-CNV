@@ -21,7 +21,7 @@ struct SGetCnvSignalCml {
 
 	// operation parameters
 	int coverage = 0;	// -c --coverage
-	std::string region;     // -r --region
+	//std::string region;     // -r --region
 	uint8_t aln_qual = 40;	// -q --aln_qual
 	unsigned int minimum_report_size = 5000;	// -m --minimum_report_size
 	int bin = 50;		// --bin
@@ -49,7 +49,7 @@ struct SGetCnvSignalCml {
 		std::string("\n") +
 		std::string("Operations:\n") +
 		std::string("	-c --coverage <INT>		The expected coverage.\n") +
-		std::string("	-r --region chr:begin-end	A target region.\n") +
+		//std::string("	-r --region chr:begin-end	A target region.\n") +
 		std::string("	-q --aln_qual			A mapping quality filter for alignments. [40]\n") +
 		std::string("	-m --minimum_report_size	The minimum report SV size. [45K]\n") +
 		std::string("	--bin <INT>			Report a result for each # bp. [50]\n") +
@@ -125,7 +125,7 @@ struct SGetCnvSignalCml {
 
 			// operation parameters
 			{"coverage", required_argument, NULL, 'c'},
-			{"region", required_argument, NULL, 'r'},
+			//{"region", required_argument, NULL, 'r'},
 			{"aln_qual", required_argument, NULL, 'q'},
 			{"minimum_report_size", required_argument, NULL, 'm'},
 			{"bin", required_argument, NULL, 2},
@@ -147,7 +147,7 @@ struct SGetCnvSignalCml {
 				case 'b': bam = optarg; break;
 				case 'o': output = optarg; break;
 				case 'c': coverage = atoi(optarg); break;
-				case 'r': region = optarg; break;
+				//case 'r': region = optarg; break;
 				case 'q': aln_qual = atoi(optarg); break;
 				case 'm':
 					tmp = optarg;
