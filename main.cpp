@@ -26,6 +26,7 @@ struct SubCommand {
 int main (int argc, char** argv) {
 	SubCommand cml_option;
 	std::string command;
+
 	if(argc < 2) {
 		std::cerr << cml_option.Help(argv[0]) << std::endl;
 		return 1;
