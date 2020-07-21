@@ -188,7 +188,7 @@ void ProcessAlignment (SBamData & bam_data, const bam1_t * aln, const uint8_t al
 
 	// Read depth
 	if (!bam_data.read_depth.empty() && aln->core.pos < bam_data.read_depth.front().pos) {
-		std::cerr << "ERROR: The pos of " << bam_get_qname(aln) << " " << aln->core.pos << " is inconsistent." << std::endl
+		std::cerr << "[JAX-CNV] ERROR: The pos of " << bam_get_qname(aln) << " " << aln->core.pos << " is inconsistent." << std::endl
 				<< "\t\tThe smallest pos of the current bin is " << bam_data.read_depth.front().pos << std::endl;
 	} else {
 		int32_t pos = aln->core.pos;
@@ -298,13 +298,13 @@ void FilterCnvs(std::vector<SHmmStats> & cnvs, const std::string kmer_table, con
 	std::vector<SHmmStats>::iterator ite = cnvs.begin();
 	//for (std::list<SHmmStats>::const_iterator ite = cnvs.begin(); ite != cnvs.end(); ++ite) {
 	while (ite != cnvs.end()) {
-		std::cerr << "Filter checking for " << ite->chr << "\t" << ite->pos << "\t" << ite->length << std::endl;
+		std::cerr << "[JAX-CNV] Filter checking for " << ite->chr << "\t" << ite->pos << "\t" << ite->length << std::endl;
 		if (chr_name != ite->chr) {
 			load_kmer = Fastaq::FastaLoad(kmer_seq, kmer_table.c_str(), false, ite->chr.c_str());
 			if (!load_kmer)
-				std::cerr << "WARNING: Cannot load kmer seqeunces " << ite->chr << " from " << kmer_table << std::endl;
+				std::cerr << "[JAX-CNV] WARNING: Cannot load kmer seqeunces " << ite->chr << " from " << kmer_table << std::endl;
 			else
-				std::cerr << "Message: Loading kmer of chromosome " << ite->chr << " is done." << std::endl;
+				std::cerr << "[JAX-CNV] Message: Loading kmer of chromosome " << ite->chr << " is done." << std::endl;
 		}
 		if (load_kmer) {
 			const unsigned int kmer_bin = 10;
@@ -320,7 +320,7 @@ void FilterCnvs(std::vector<SHmmStats> & cnvs, const std::string kmer_table, con
 						uniq_kmers[i] += kmer_score;
 				}
 				uniq_kmers[i] = uniq_kmers[i] / (ite->length / static_cast<float>(kmer_bin));
-				std::cerr << i << "\t" << uniq_kmers[i] << std::endl;
+				std::cerr << "[JAX-CNV] " << i << "\t" << uniq_kmers[i] << std::endl;
 			}
 
 
@@ -349,15 +349,15 @@ void FilterCnvs(std::vector<SHmmStats> & cnvs, const std::string kmer_table, con
 			for (std::vector<float>::const_iterator kmer_ite = uniq_kmers.begin(); kmer_ite != uniq_kmers.end(); ++kmer_ite)
 				if (*kmer_ite > unique_kmer) ++uniq_kmer_count;
 
-			std::cerr << uniq_kmer_count << "\t" << leading_remove << "\t" << tailing_remove << "\t" << uniq_kmer_count / static_cast<float>(kmer_bin - leading_remove - tailing_remove) << std::endl;
+			std::cerr << "[JAX-CNV] " << uniq_kmer_count << "\t" << leading_remove << "\t" << tailing_remove << "\t" << uniq_kmer_count / static_cast<float>(kmer_bin - leading_remove - tailing_remove) << std::endl;
 			// Somehow >= 0.7 doesn't work.
 			if ((uniq_kmer_count / static_cast<float>(kmer_bin - leading_remove - tailing_remove)) > 0.69) { // the entire region pass the filter
 				++ite;
-std::cerr << "Keep" << std::endl;
+std::cerr << "[JAX-CNV] Keep" << std::endl;
 			} else { // too many non uniq blocks
 				cnvs.erase(ite);
 				//if (ite != cnvs.end()) ++ite;
-std::cerr << "Filter" << std::endl;
+std::cerr << "[JAX-CNV] Filter" << std::endl;
 			}
 		}
 	}
@@ -411,7 +411,7 @@ void ParseTargetRegion(const std::string & chrom, const std::string & bamfile, s
 		while(getline(ss, tmp, ',')) {
 			std::unordered_map<std::string, Fastaq::SRegion>::const_iterator ite = region_map.find(tmp);
 			if (ite == region_map.end()) {
-				std::cerr << "WARNING: Cannot find " << tmp << " in BAM header." << std::endl;
+				std::cerr << "[JAX-CNV] WARNING: Cannot find " << tmp << " in BAM header." << std::endl;
 			} else {
 				regions.push_back(ite->second);
 			}
@@ -426,13 +426,13 @@ bool CheckChrExistence(std::list<Fastaq::SRegion> & regions, const std::string &
 
 	// Make sure the headers of fasta and kemr_table are identical.
 	if (fasta_header.GetReferenceCount() != kmer_table_header.GetReferenceCount()) {
-		std::cerr << "ERROR: The numbers of references in " << fasta << " and " << kmer_table << " do not match." << std::endl;
+		std::cerr << "[JAX-CNV] ERROR: The numbers of references in " << fasta << " and " << kmer_table << " do not match." << std::endl;
 		return false;
 	}
 	for (unsigned int i = 0; i < fasta_header.GetReferenceCount(); ++i) {
 		const char* chr_name = fasta_header.GetReferenceName(i);
 		if (kmer_table_header.GetReferenceId(chr_name) == -1) {
-			std::cerr << "ERROR: The reference " << chr_name << " in " << fasta << " cannot be found in " << kmer_table << "." << std::endl;
+			std::cerr << "[JAX-CNV] ERROR: The reference " << chr_name << " in " << fasta << " cannot be found in " << kmer_table << "." << std::endl;
 			return false;
 		}
 	}
@@ -443,7 +443,7 @@ bool CheckChrExistence(std::list<Fastaq::SRegion> & regions, const std::string &
 	std::list<Fastaq::SRegion>::iterator ite = regions.begin();
 	while (ite != regions.end() && !regions.empty()) {
 		if (fasta_header.GetReferenceId(ite->chr.c_str()) == -1) {
-			std::cerr << "WARNING: " << ite->chr << " is not in fasta so it won't be further processed." << std::endl;
+			std::cerr << "[JAX-CNV] WARNING: " << ite->chr << " is not in fasta so it won't be further processed." << std::endl;
 			regions.erase(ite);
 			exist = false;
 			if (ite != regions.end()) ++ite;
@@ -480,7 +480,7 @@ int GetCnvSignal::Run () const {
 	samFile * bam_reader = sam_open(cmdline.bam.c_str(), "r");
 	hts_idx_t * idx = sam_index_load(bam_reader,  cmdline.bam.c_str());
 	if (idx == NULL && sam_index_build(cmdline.bam.c_str(), 0) < 0) { // Try to build bam index
-		std::cerr << "ERROR: Index of bam is not there and cannot be built." << std::endl;
+		std::cerr << "[JAX-CNV] ERROR: Index of bam is not there and cannot be built." << std::endl;
 		sam_close(bam_reader);
 		return 1;
 	}
@@ -492,11 +492,11 @@ int GetCnvSignal::Run () const {
 	if (coverage == 0) {
 		std::vector<float> coverages;
 		coverage = EstimateCoverage::EstimateCoverage(coverages, female, male, cmdline.bam.c_str(), cmdline.kmer_table.c_str());
-		if (female && !male) std::cerr << "Gender: Female." << std::endl;
-		else if (!female && male) std::cerr << "Gender: Male." << std::endl;
-		else std::cerr << "Gender: Cannot determine." << std::endl;
+		if (female && !male) std::cerr << "[JAX-CNV] Gender: Female." << std::endl;
+		else if (!female && male) std::cerr << "[JAX-CNV] Gender: Male." << std::endl;
+		else std::cerr << "[JAX-CNV] Gender: Cannot determine." << std::endl;
 
-		std::cerr << "Message: The estimated coverage is " << coverage << std::endl;
+		std::cerr << "[JAX-CNV] Message: The estimated coverage is " << coverage << std::endl;
 	}
 
 	// Process BAM by regions
@@ -504,22 +504,22 @@ int GetCnvSignal::Run () const {
 	std::vector<SHmmStats> cnvs;
 	std::stringstream bam_signal_out;
 	for (std::list<Fastaq::SRegion>::const_iterator ite = regions.begin(); ite != regions.end(); ++ite) {
-		std::cerr << "Message: Processing " << ite->chr << ":" << ite->begin << "-" << ite->end << std::endl;
+		std::cerr << "[JAX-CNV] Message: Processing " << ite->chr << ":" << ite->begin << "-" << ite->end << std::endl;
 		// The chromosome is not in ref. Load it from fasta.
 		if (ref_name != ite->chr) {
 			ref_name = ite->chr; // Keep the new chr name.
 			// Load a complete seq of the chromosome.
 			if (!Fastaq::FastaLoad(ref_seq, cmdline.fasta.c_str(), true, ite->chr.c_str())) {
-				std::cerr << "ERROR: Cannot load chromosome " << ite->chr << " from " << cmdline.fasta << std::endl;
+				std::cerr << "[JAX-CNV] ERROR: Cannot load chromosome " << ite->chr << " from " << cmdline.fasta << std::endl;
 				return 1;
 			}
-			std::cerr << "Message: Loading chromosome " << ite->chr << " is done." << std::endl;
+			std::cerr << "[JAX-CNV] Message: Loading chromosome " << ite->chr << " is done." << std::endl;
 			if (!cmdline.log.empty()) { // Need to output kmer
 				if (!Fastaq::FastaLoad(kmer_seq, cmdline.kmer_table.c_str(), true, ite->chr.c_str())) {
-					std::cerr << "ERROR: Cannot load kmer seqeunces " << ite->chr << " from " << cmdline.kmer_table << std::endl;
+					std::cerr << "[JAX-CNV] ERROR: Cannot load kmer seqeunces " << ite->chr << " from " << cmdline.kmer_table << std::endl;
 					return 1;
 				}
-				std::cerr << "Message: Loading kmer of chromosome " << ite->chr << " is done." << std::endl;
+				std::cerr << "[JAX-CNV] Message: Loading kmer of chromosome " << ite->chr << " is done." << std::endl;
 			}
 		}
 		
@@ -541,7 +541,7 @@ int GetCnvSignal::Run () const {
 		}
 	}
 
-	std::cerr << "Message: HMM completes." << std::endl;
+	std::cerr << "[JAX-CNV] Message: HMM completes." << std::endl;
 	for (std::vector<SHmmStats>::const_iterator ite = cnvs.begin(); ite != cnvs.end(); ++ite) {
 		std::cerr << ite->stats << "\t" << ite->chr << "\t" << ite->pos << "\t" << ite->pos + ite->length - 1  << "\t" << ite->length << std::endl;
 	}
@@ -553,7 +553,7 @@ int GetCnvSignal::Run () const {
 	if (use_output_file) {
 		output.open(cmdline.output, std::ofstream::out);
 		if (!output.good()) {
-			std::cerr << "ERROR: Cannot open " << cmdline.output << ". The result will be shown in stdout instead." << std::endl;
+			std::cerr << "[JAX-CNV] ERROR: Cannot open " << cmdline.output << ". The result will be shown in stdout instead." << std::endl;
 			use_output_file = false;
 		}
 	}
@@ -581,6 +581,8 @@ int GetCnvSignal::Run () const {
 		PrintResults(log, bam_signal_out);
 		log.close();
 	}
+
+	std::cerr<< "[JAX-CNV] The program finishes normally." << std::endl;
 
 	return 0;
 }

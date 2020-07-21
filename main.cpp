@@ -15,7 +15,7 @@ struct SubCommand {
 
 	const std::string Help (const char* program) const { return
 		std::string("\n") +
-		std::string("USAGE: ") + program + std::string(" <command> [options]\n\n") +
+		std::string("[JAX-CNV] USAGE: ") + program + std::string(" <command> [options]\n\n") +
 		std::string("Commands:\n") +
 		std::string("\tGrabJellyfishKmer	Report the count of kmer giving Jellyfish database and a FASTA.\n") +
 		std::string("\tGetCnvSignal	Report CNV signals such as read depth and kmer count.\n");

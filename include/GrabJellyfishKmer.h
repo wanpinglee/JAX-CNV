@@ -31,7 +31,7 @@ struct SGrabJellyfishKmerCml {
 	// Help list
 	const std::string Help (const char* program) const { return
 		std::string("\n") +
-		std::string("USAGE: ") + program + std::string(" -i <jellyfish_db> -f <FASTA>\n\n") +
+		std::string("[JAX-CNV] USAGE: ") + program + std::string(" -i <jellyfish_db> -f <FASTA>\n\n") +
 		std::string("	-h --help			Print this help list.\n") +
 		std::string("\n") +
 		std::string("Input & Output:\n") +

@@ -60,7 +60,7 @@ void GetKmerCount (const Fastaq::CReference & ref, const Fastaq::SRegion & regio
 		const unsigned int target_begin = !region.chr.empty() ? std::max(static_cast<unsigned int>(0), region.begin) : 0;
 
 #ifdef DEBUG
-	std::cerr << "GetKmerCount:" << std::endl;
+	std::cerr << "[JAX-CNV] GetKmerCount:" << std::endl;
 	std::cerr << "\tProcessing region " << ref_names[i] << ":" << target_begin << "-" << target_end << std::endl;
 #endif
 		// Cannot proceed when target_len < kmer_size
@@ -134,11 +134,11 @@ int GrabJellyfishKmer::Run () const {
 	std::ifstream db(cmdline.input_jfdb, std::ios::in|std::ios::binary);
 	jellyfish::file_header header(db);
 	if(!db.good()) { // The jellyfish database is broken.
-		std::cerr << "ERROR: Cannot open " << cmdline.input_jfdb << std::endl;
+		std::cerr << "[JAX-CNV] ERROR: Cannot open " << cmdline.input_jfdb << std::endl;
 		return 1;
 	}
 	if (header.format() != binary_dumper::format) {
-		std::cerr << "ERROR: Cannot process jellyfish database built by bloom filter." << std::endl;
+		std::cerr << "[JAX-CNV] ERROR: Cannot process jellyfish database built by bloom filter." << std::endl;
 		return 1;
 	}
 	
@@ -146,7 +146,7 @@ int GrabJellyfishKmer::Run () const {
 	const unsigned int kmer_size = header.key_len() / 2; // The kmer size is key_len() / 2.
 	jellyfish::mer_dna::k(kmer_size);
 	if (kmer_size < 1) { // Cannot proceed if kmer size is not larger than zero.
-		std::cerr << "ERROR: The kmer size (" << kmer_size << ") should be larger than 0." << std::endl;
+		std::cerr << "[JAX-CNV] ERROR: The kmer size (" << kmer_size << ") should be larger than 0." << std::endl;
 		return 1;
 	}
 
@@ -161,7 +161,7 @@ int GrabJellyfishKmer::Run () const {
 	Fastaq::SRegion region;
 	if (!cmdline.region.empty()) {
 		if (!region.Parse(cmdline.region)) {
-			std::cerr << "ERROR: The given region is not valid." << std::endl;
+			std::cerr << "[JAX-CNV] ERROR: The given region is not valid." << std::endl;
 			return 1;
 		}
 	}
@@ -170,12 +170,12 @@ int GrabJellyfishKmer::Run () const {
 	Fastaq::CReference ref; // fastaq lib.
 	if (!cmdline.region.empty()) {
 		if (!Fastaq::FastaLoad(ref, cmdline.fasta.c_str(), true, region.chr.c_str())) {
-			std::cerr << "ERROR: Cannot load chromosome " << region.chr << " from FASTA." << std::endl;
+			std::cerr << "[JAX-CNV] ERROR: Cannot load chromosome " << region.chr << " from FASTA." << std::endl;
 			return 1;
 		}
 	} else {
 		if (!Fastaq::FastaLoad(ref, cmdline.fasta.c_str())) {
-			std::cerr << "ERROR: Cannot load FASTA." << std::endl;
+			std::cerr << "[JAX-CNV] ERROR: Cannot load FASTA." << std::endl;
 			return 1;
 		}
 	}
