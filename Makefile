@@ -51,7 +51,9 @@ clean:
 	@rm -rf $(OBJ_DIR) $(BIN_DIR)
 	$(MAKE) clean -C $(LIB)/fastaq
 	@rm -rf $(LIB)/jellyfish-2.2.6
+	$(MAKE) clean -C $(LIB)/htslib
 	$(MAKE) clean -C $(LIB)/umdhmm-v1.02
+	@rm -f gitversion.c
 .PHONY: clean
 
 
