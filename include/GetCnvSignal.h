@@ -37,7 +37,7 @@ struct SGetCnvSignalCml {
 
 	// Help list
 	const std::string Help (const char* program) const { return
-		std::string("[JAX-CNV] USAGE: ") + program + std::string(" -f <FASTA> -k <kmer_table> -b <BAM>\n\n") +
+		std::string("\nUSAGE: ") + program + std::string(" -f <FASTA> -k <kmer_table> -b <BAM>\n\n") +
 		std::string("	-h --help			Print this help list.\n") +
 		std::string("\n") +
 		std::string("Input & Output:\n") +
@@ -61,6 +61,7 @@ struct SGetCnvSignalCml {
 	// Check the required arguments.
 	bool CheckArg () const {
 		bool ok = true;
+		std::cerr << std::endl;
 		if (bin < 1) {
 			std::cerr << "ERROR: --bin <INT> should not smaller than 1." << std::endl;
 			ok = false;

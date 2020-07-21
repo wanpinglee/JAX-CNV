@@ -11,7 +11,7 @@ To run the tool, the following dependencies are required
   * **autoconf**    version 2.69 or higher
 
 JAX-CNV depends on the following tools, which are already included in JAX-CNV/lib/
-  * **fastaq**    [Github](https://github.com/wanpinglee/fastaq/tree/990d69bffe24a2ea2adf823052bddcf25ea71017)
+  * **fastaq**    [Github](https://github.com/wanpinglee/fastaq/tree/dd2ed1c12863856996e25a88950aecdc4a18aeb7)
   * **jellyfish-2.2.6**    [Github](https://github.com/gmarcais/Jellyfish/releases/tag/v2.2.6)
   * **htslib**    [Github](https://github.com/samtools/htslib/tree/b8941e42e1962a026ff1f742df1a66c7edddf89c)
 
@@ -59,6 +59,7 @@ Operations:
         --log <FILE>                    Log output.
         --unique_kmer <FLOAT>           Require percentage of unique kmer to report a CNV. [0.6]
         --kmer_score <FLOAT>            Score for log2(kmer count) = 2 positions. [0.1]
+	--chrom <STRING>		For example, --chrom chr1,chr2 or --chrom $(seq -s "," -f "chr%g" 1 22),chrX,chrY.
 ```
 
 ## For Dcoker users

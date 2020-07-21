@@ -31,7 +31,7 @@ struct SGrabJellyfishKmerCml {
 	// Help list
 	const std::string Help (const char* program) const { return
 		std::string("\n") +
-		std::string("[JAX-CNV] USAGE: ") + program + std::string(" -i <jellyfish_db> -f <FASTA>\n\n") +
+		std::string("USAGE: ") + program + std::string(" -i <jellyfish_db> -f <FASTA>\n\n") +
 		std::string("	-h --help			Print this help list.\n") +
 		std::string("\n") +
 		std::string("Input & Output:\n") +
@@ -50,6 +50,7 @@ struct SGrabJellyfishKmerCml {
 	// Check the required arguments.
 	bool CheckArg () const {
 		bool ok = true;
+		std::cerr << std::endl;
 		if (bin < 1) {
 			std::cerr << "ERROR: --bin <INT> should not smaller than 1." << std::endl;
 			ok = false;

@@ -1,2 +1,2 @@
-gitversion.c
+version.h
 *.o

@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
 RUN cd / && mkdir -p tools && cd /tools
 
 # Git clone JAX-CNV
-RUN git clone --recursive https://github.com/TheJacksonLaboratory/JAX-CNV.git
+RUN git clone --recursive -b v1.1.0 https://github.com/TheJacksonLaboratory/JAX-CNV.git
 
 # Build JAX-CNV
 RUN cd JAX-CNV \

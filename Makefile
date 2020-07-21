@@ -41,7 +41,7 @@ HTS_LIB=$(LIB)/htslib/libhts.a
 all: $(PROGRAM)
 .PHONY: all
 
-$(PROGRAM): gitversion.c fastaq umdhmm $(JELLYFISH) $(HTS_LIB) $(SOURCES)
+$(PROGRAM): version.h fastaq umdhmm $(JELLYFISH) $(HTS_LIB) $(SOURCES)
 	@mkdir -p $(BIN_DIR)
 	@$(CXX) $(CXXFLAGS) -o $@ $(SOURCES) $(UMDHMM_SRC) $(INCLUDE) $(HTS_LIB) $(LIBRARY)
 
@@ -62,8 +62,8 @@ $(OBJ_DIR):
 $(BIN_DIR):
 	@mkdir -p $(BIN_DIR)
 
-gitversion.c: .git/HEAD .git/index
-	@echo "const char *gitversion = \"$(shell git rev-parse HEAD)\";" > $@
+version.h: .git/HEAD .git/index
+	@echo "const char *gitversion = \"$(shell git describe --tags --always)\";" > $@
 
 fastaq:
 	@echo "- Building in fastaq"

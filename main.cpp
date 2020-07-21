@@ -6,6 +6,7 @@
 // Self include
 #include "GrabJellyfishKmer.h"
 #include "GetCnvSignal.h"
+#include "version.h"
 //#include "GenerateKmer.h"
 
 struct SubCommand {
@@ -15,7 +16,7 @@ struct SubCommand {
 
 	const std::string Help (const char* program) const { return
 		std::string("\n") +
-		std::string("[JAX-CNV] USAGE: ") + program + std::string(" <command> [options]\n\n") +
+		std::string("USAGE: ") + program + std::string(" <command> [options]\n\n") +
 		std::string("Commands:\n") +
 		std::string("\tGrabJellyfishKmer	Report the count of kmer giving Jellyfish database and a FASTA.\n") +
 		std::string("\tGetCnvSignal	Report CNV signals such as read depth and kmer count.\n");
@@ -26,6 +27,8 @@ struct SubCommand {
 int main (int argc, char** argv) {
 	SubCommand cml_option;
 	std::string command;
+
+	std::cerr << "JAX-CNV Version: " << gitversion << std::endl;
 
 	if(argc < 2) {
 		std::cerr << cml_option.Help(argv[0]) << std::endl;
