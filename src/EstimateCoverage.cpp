@@ -160,9 +160,9 @@ int EstimateCoverage(std::vector<float> & coverages, bool & female, bool & male,
 		for (std::vector<float>::const_iterator cov_ite = chr_cov.begin(); cov_ite != chr_cov.end(); ++cov_ite) 
 			cov_chr_total += *cov_ite;
 		coverages[i] = cov_chr_total / static_cast<float>(chr_cov.size());
-#ifdef DEBUG
+//#ifdef DEBUG
 		std::cerr << Human::HumanAutosome[i] << "\t" << coverages[i] << std::endl;
-#endif
+//#endif
 	}
 
 	for (int i  = 0; i < Human::HumanAllosomeSize; ++i) {
@@ -177,9 +177,9 @@ int EstimateCoverage(std::vector<float> & coverages, bool & female, bool & male,
 		for (std::vector<float>::const_iterator cov_ite = chr_cov.begin(); cov_ite != chr_cov.end(); ++cov_ite) 
 			cov_chr_total += *cov_ite;
 		coverages[i + Human::HumanAutosomeSize] = cov_chr_total / static_cast<float>(chr_cov.size());
-#ifdef DEBUG
+//#ifdef DEBUG
 		std::cerr << Human::HumanAllosome[i] << "\t" << coverages[i + Human::HumanAutosomeSize] << std::endl;
-#endif
+//#endif
 	}
 
 	int all_chr_cov = 0;

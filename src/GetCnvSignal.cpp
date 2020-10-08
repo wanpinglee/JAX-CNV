@@ -500,6 +500,7 @@ int GetCnvSignal::Run () const {
 	}
 
 	// Process BAM by regions
+	/*
 	std::string ref_seq, kmer_seq, ref_name;
 	std::vector<SHmmStats> cnvs;
 	std::stringstream bam_signal_out;
@@ -573,12 +574,13 @@ int GetCnvSignal::Run () const {
 			else std::cout << tmp;
 		}
 	}
+	*/
 
 	// Open a file for outputing log
 	if (!cmdline.log.empty()) {
 		std::ofstream log;
 		log.open(cmdline.log, std::ofstream::out);
-		PrintResults(log, bam_signal_out);
+		//PrintResults(log, bam_signal_out);
 		log.close();
 	}
 

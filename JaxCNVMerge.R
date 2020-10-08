@@ -125,8 +125,8 @@ getTheMergeRes <- function(theDataUseToMerge){
 
 ##########################################################################################
 ################# check if the required packages have been installed #####################
-if(!is.installed("dbscan")){ install.packages("dbscan", repos="http://cran.us.r-project.org") }
-if(!is.installed("data.table")){ install.packages("data.table", repos="http://cran.us.r-project.org") }
+if(!is.installed("dbscan")){ install.packages("dbscan", lib.loc="/home/leew8/local/R_libs/", repos="http://cran.us.r-project.org") }
+if(!is.installed("data.table")){ install.packages("data.table", lib.loc="/home/leew8/local/R_libs/", repos="http://cran.us.r-project.org") }
 library(dbscan)
 library(data.table)
 ##########################################################################################
