@@ -48,6 +48,8 @@ void GetKmerCount (const Fastaq::CReference & ref, const Fastaq::SRegion & regio
 			const jellyfish::file_header & header, const binary_query & bq, const bool running_length_encoding,
 			const bool ascii, const int & bin, const bool contig) {
 
+	std::ios_base::sync_with_stdio(false); // Fastern IO
+	std::cin.tie(NULL); // Fastern IO
 
 	std::vector<std::string> ref_names;
 	ref.GetReferenceNames(&ref_names);
